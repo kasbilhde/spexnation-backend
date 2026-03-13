@@ -11,7 +11,7 @@ const getAllOrders = async (req, res) => {
 
 
         // For each product, attach its reviews and reviewer info
-        const order = await Order.find({});
+        const order = await Order.find({}).sort({ createdAt: -1 }).lean();
 
 
 
@@ -48,7 +48,7 @@ const myOrders = async (req, res) => {
         const { id } = req.params;;
 
 
-        const myOrder = await Order.find({ userID: id });
+        const myOrder = await Order.find({ userID: id }).sort({ createdAt: -1 }).lean();
 
 
 
@@ -93,7 +93,7 @@ const getSingleOrder = async (req, res) => {
 
 
         // Find product by ID
-        const order = await Order.findById(id);
+        const order = await Order.findById(id).sort({ createdAt: -1 }).lean();
 
 
         if (!order) {
@@ -320,11 +320,99 @@ const deleteOrder = async (req, res) => {
 
 
 
+/********** reorder controller is here **********/
+const reorders = async (req, res) => {
+
+
+
+
+    try {
+
+        const bodyData = req.body;
+
+
+        const orderID = `OID-${Date.now().toString().slice(-5)}`;
+
+
+
+
+        const orderData = {
+            orderId: orderID,
+            userID: bodyData?.userID,
+            fullname: bodyData?.fullname,
+            email: bodyData?.email,
+            address1: bodyData?.address1,
+            address2: bodyData?.address2,
+            city: bodyData?.city,
+            state: bodyData?.state,
+            country: bodyData?.country,
+            zipcode: bodyData?.zipcode,
+            PrescriptionImage: bodyData?.PrescriptionImage,
+            pdf: "https://res.cloudinary.com/drkwi34bs/image/upload/v1773138480/spexnation/f6pzeplfhlluh1na1uvt.pdf",
+            coupondiscount: bodyData?.coupondiscount,
+            discountPrice: bodyData?.discountPrice,
+            grandTotal: bodyData?.grandTotal,
+            iscoupon: bodyData?.iscoupon,
+            paymentIntent: "",
+            stripeSessionId: "",
+            paymentStatus: "Pending",
+            deliveryStatus: "Pending",
+            hasData: bodyData?.hasData,
+        };
+
+        const order = await Order.create(orderData);
+
+
+        // payment code is here
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            line_items: [
+                {
+                    price_data: {
+                        currency: "eur",
+                        product_data: {
+                            name: bodyData?.hasData[0]?.LenseName,
+                            images: [bodyData?.hasData[0]?.ProductDetails?.product_Images[bodyData?.hasData[0]?.selectedProductIndex].img[0]],
+                        },
+                        unit_amount: Math.round(bodyData?.grandTotal * 100),
+                    },
+                    quantity: 1,
+                }
+            ],
+            success_url: `${process.env.LIVE_SITE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.LIVE_SITE_URL}/payment/cancel`,
+            client_reference_id: orderID,
+        });
+
+
+
+        // Send success response
+        res.status(201).json({
+            success: true,
+            message: "Re Order created successfully!",
+            url: session.url
+        });
+
+    } catch (err) {
+        console.error("Error creating Reorder:", err.message);
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong while creating the Reorder.",
+        });
+    }
+
+};
+
+
+
+
+
 
 
 
 /*********** modules export from here ************/
 export {
-    createOrder, deleteOrder, getAllOrders, getSingleOrder, myOrders, updateOrder
+    createOrder, deleteOrder, getAllOrders, getSingleOrder, myOrders, reorders, updateOrder
 };
 

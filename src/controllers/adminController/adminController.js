@@ -22,17 +22,15 @@ const adminDeshboard = async (req, res) => {
         const totalproduct = product.length;
         const totalOrder = order.length;
         const totalPending = order.filter((order) => order.paymentStatus === "Pending");
-        const totalDelivered = order.filter((order) => order.paymentStatus === "Delivered");
-        const totalPaid = order.filter((order) => order.paymentStatus === "Pending");
+        const totalDelivered = order.filter((order) => order.deliveryStatus === "Dispatched");
+        const totalPaid = order.filter((order) => order.paymentStatus === "paid");
         const totalRevenueArr = [];
+
         for (let i = 0; i < totalPaid?.length; i++) {
             const total = getTotalPrice(totalPaid[i]?.hasData[0]?.total);
             totalRevenueArr.push(total);
         }
         const totalRevenue = totalRevenueArr?.reduce((a, b) => a + b, 0);
-
-
-
 
 
         res.status(200).json({

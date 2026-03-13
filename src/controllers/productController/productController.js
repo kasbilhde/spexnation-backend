@@ -1,6 +1,4 @@
 import Product from "../../models/Product.js";
-import Review from "../../models/Review.js";
-import User from "../../models/User.js";
 import { productQueue } from "../../queues/product.queue.js";
 import uploadFilesToCloudinary from "../../utils/uploadFilesToCloudinary.js";
 import productSchema from "../../validationSchema/productSchema.js";
@@ -15,7 +13,7 @@ const getAllProduct = async (req, res) => {
 
 
     // For each product, attach its reviews and reviewer info
-    const product = await Product.find({});
+    const product = await Product.find({}).sort({ createdAt: -1 }).lean();
 
 
 
@@ -59,8 +57,8 @@ const getSingleProduct = async (req, res) => {
 
 
     // Find product by ID
-    const product = await Product.findById(id);
-    const review = await Review.find({ productId: id });
+    const product = await Product.findById(id).lean();
+
 
 
     if (!product) {
@@ -69,58 +67,10 @@ const getSingleProduct = async (req, res) => {
 
 
 
-    //find all review users for this product
-    const reviewUsers = await Promise.all(
-      review.map(async (rev) => {
-        const user = await User.findById(rev.userId);
-
-        const finalrview = { ...rev._doc, user: user ? { fname: user.fname, mname: user.mname, lname: user.lname, phone: user.phone, email: user.email, role: user.role, city: user.city, address: user.address, zipcode: user.zipcode } : null };
-        return finalrview;
-
-      })
-    );
-
-
-
-    const finalres = {
-      ...product._doc,
-      reviews: {
-        total: review.length,
-        analytics: {
-          average: review.length > 0 ? review.reduce((acc, rev) => acc + rev.reviewStar, 0) / review.length : 0,
-          star5: {
-            count: review.filter((rev) => rev.reviewStar === 5).length,
-            parsentage: review.filter((rev) => rev.reviewStar === 5).length > 0 ? Math.floor((review.filter((rev) => rev.reviewStar === 5).length / review.length) * 100) : 0
-          },
-          star4: {
-            count: review.filter((rev) => rev.reviewStar === 4).length,
-            parsentage: review.filter((rev) => rev.reviewStar === 4).length > 0 ? Math.floor((review.filter((rev) => rev.reviewStar === 4).length / review.length) * 100) : 0
-          },
-          star3: {
-            count: review.filter((rev) => rev.reviewStar === 3).length,
-            parsentage: review.filter((rev) => rev.reviewStar === 3).length > 0 ? Math.floor((review.filter((rev) => rev.reviewStar === 3).length / review.length) * 100) : 0
-          },
-          star2: {
-            count: review.filter((rev) => rev.reviewStar === 2).length,
-            parsentage: review.filter((rev) => rev.reviewStar === 2).length > 0 ? Math.floor((review.filter((rev) => rev.reviewStar === 2).length / review.length) * 100) : 0
-          },
-          star1: {
-            count: review.filter((rev) => rev.reviewStar === 1).length,
-            parsentage: review.filter((rev) => rev.reviewStar === 1).length > 0 ? Math.floor((review.filter((rev) => rev.reviewStar === 1).length / review.length) * 100) : 0
-          },
-
-        },
-        reviewsDetails: reviewUsers,
-      },
-    };
-
-
-
-
     // Return the product
     res.status(200).json({
       success: true,
-      data: finalres,
+      data: product,
     });
   } catch (error) {
     console.error("Error fetching product:", error.message);

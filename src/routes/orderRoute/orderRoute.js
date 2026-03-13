@@ -2,6 +2,7 @@ import express from "express";
 import {
     createOrder, deleteOrder, getAllOrders, getSingleOrder,
     myOrders,
+    reorders,
     updateOrder
 } from "../../controllers/orderController/orderController.js";
 import { authorize, protect } from "../../middlewares/authMiddleware.js";
@@ -10,6 +11,7 @@ import { authorize, protect } from "../../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.post("/createorder", createOrder);
+router.post("/reorders", protect, authorize("user"), reorders);
 router.get("/allorders", protect, authorize("admin"), getAllOrders);
 router.get("/myorders/:id", protect, authorize("user"), myOrders);
 router.get("/singleorder/:id", protect, authorize("admin", "user"), getSingleOrder);
