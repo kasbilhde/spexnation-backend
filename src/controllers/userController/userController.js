@@ -4,7 +4,7 @@ import User from "../../models/User.js";
 const getAllUsers = async (req, res) => {
 
   try {
-    const users = await User.find();
+    const users = await User.find().sort({ createdAt: -1 }).select("-password").lean();
     res.json({
       success: true,
       message: "All Users fetched successfully",
