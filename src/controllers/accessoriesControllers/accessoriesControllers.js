@@ -1,4 +1,5 @@
 import Accessories from "../../models/Accessories.js";
+import uploadAccessoriesFileToCloudinary from "../../utils/uploadAccessoriesFileToCloudinary.js";
 import AccessoriesSchema from "../../validationSchema/Accessories.validation.js";
 
 
@@ -28,16 +29,8 @@ const getAllAccessories = async (req, res) => {
 
 
 
-
-
-
-
 /********************  User registration Controller here ***********************/
 const createAccessories = async (req, res) => {
-
-
-
-
 
 
     try {
@@ -47,14 +40,9 @@ const createAccessories = async (req, res) => {
         const { error, value: { name, price, description, img, productType } } = AccessoriesSchema.validate(req.body, { abortEarly: false });
 
 
-
-
-
-
         // If validation fails, return 400 with all validation errors
         if (error) {
             const validationErrors = error.details.map((err) => err.message);
-
             return res.status(400).json({
                 success: false,
                 message: "Invalid Accessories data.",
@@ -64,15 +52,19 @@ const createAccessories = async (req, res) => {
 
 
 
+
+        // uppload accessories image to cloudinary
+        const accessoriesImage = await uploadAccessoriesFileToCloudinary(img);
+
+
         // Create user with hashed password
         const accessories = await Accessories.create({
             name,
             price,
             description,
-            img,
+            img: accessoriesImage,
             productType
         });
-
 
 
         res.status(201).json({
@@ -104,12 +96,23 @@ const updateAccessories = async (req, res) => {
 
 
 
-        const value = req.body;
+
+        const { name, price, description, img, productType } = req.body;
+        // uppload accessories image to cloudinary
+        const accessoriesImage = await uploadAccessoriesFileToCloudinary(img);
+
+        const updateDataObject = {
+            name: name,
+            price: price,
+            description: description,
+            img: accessoriesImage,
+            productType: productType
+        };
 
 
 
         // Update the product
-        const updatedProduct = await Accessories.findByIdAndUpdate(id, value, {
+        const updatedProduct = await Accessories.findByIdAndUpdate(id, updateDataObject, {
             new: true, // return updated document
             runValidators: true, // enforce schema validation
         });
@@ -203,11 +206,6 @@ const deleteAccessories = async (req, res) => {
 
 
 };
-
-
-
-
-
 
 
 

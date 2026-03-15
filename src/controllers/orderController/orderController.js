@@ -1,6 +1,5 @@
 import stripe from "../../config/stripe.js";
 import Order from "../../models/Order.js";
-import uploadSingleFileToCloudinary from "../../utils/uploadSingleFileToCloudinary.js";
 
 
 /********** get all product controller is here **********/
@@ -60,7 +59,7 @@ const myOrders = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error fetching My order:", error.message);
+        console.error("Error fetching My order:", error);
         res.status(500).json({
             success: false,
             message: "Something went wrong while fetching order.",
@@ -123,12 +122,6 @@ const getSingleOrder = async (req, res) => {
 
 
 
-
-
-
-
-
-
 /********** create product controller is here **********/
 const createOrder = async (req, res) => {
 
@@ -137,41 +130,49 @@ const createOrder = async (req, res) => {
 
     try {
 
+
+        // body data is here
         const bodyData = req.body;
 
 
+        // create unique order id here
         const orderID = `OID-${Date.now().toString().slice(-5)}`;
 
-        const PrescriptionImage = await uploadSingleFileToCloudinary(bodyData?.hasData[0]?.prescriptionImage);
+        // uppload prescription image to cloudinary
+        // const PrescriptionImage = await uploadSingleFileToCloudinary(bodyData?.hasData[0]?.prescriptionImage);
 
 
-        const value = { orderId: orderID, ...bodyData, pdf: "", PrescriptionImage: PrescriptionImage };
+        // prepere order data object for save in database
+        const value = { orderId: orderID, ...bodyData, };
 
+
+        // save order data in database
         const order = await Order.create(value);
+
+
+        // line items prepare here
+        const lineItems = bodyData?.items?.map((product) => ({
+            price_data: {
+                currency: "eur",
+                product_data: {
+                    name: product?.name,
+                    images: [product?.image],
+                },
+                unit_amount: Math.round(product?.price * 100),
+            },
+            quantity: product?.quantity,
+        }));
 
 
         // payment code is here
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
-            line_items: [
-                {
-                    price_data: {
-                        currency: "eur",
-                        product_data: {
-                            name: bodyData?.hasData[0]?.LenseName,
-                            images: [bodyData?.hasData[0]?.ProductDetails?.product_Images[bodyData?.hasData[0]?.selectedProductIndex].img[0]],
-                        },
-                        unit_amount: Math.round(bodyData?.grandTotal * 100),
-                    },
-                    quantity: 1,
-                }
-            ],
+            line_items: lineItems,
             success_url: `${process.env.LIVE_SITE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.LIVE_SITE_URL}/payment/cancel`,
             client_reference_id: orderID,
         });
-
 
 
         // Send success response
@@ -182,7 +183,7 @@ const createOrder = async (req, res) => {
         });
 
     } catch (err) {
-        console.error("Error creating product:", err.message);
+        console.error("Error creating product:", err);
         res.status(500).json({
             success: false,
             message: "Something went wrong while creating the product.",
@@ -190,7 +191,6 @@ const createOrder = async (req, res) => {
     }
 
 };
-
 
 
 
@@ -252,10 +252,6 @@ const updateOrder = async (req, res) => {
 
 
 };
-
-
-
-
 
 
 

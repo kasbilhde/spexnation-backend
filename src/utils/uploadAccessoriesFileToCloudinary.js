@@ -1,11 +1,13 @@
 import { cloudinary } from "../config/cloudinary.js";
 
 
-const uploadSingleFileToCloudinary = async (fileData) => {
-    try {
-        if (!fileData) return null;
 
-        const result = await cloudinary.uploader.upload(fileData, {
+const uploadAccessoriesFileToCloudinary = async (img) => {
+
+    try {
+        if (!img) return null;
+
+        const result = await cloudinary.uploader.upload(img, {
             folder: "spexnation",
             resource_type: "auto", // supports pdf, image, etc.
         });
@@ -18,4 +20,4 @@ const uploadSingleFileToCloudinary = async (fileData) => {
     }
 };
 
-export default uploadSingleFileToCloudinary;
+export default uploadAccessoriesFileToCloudinary;

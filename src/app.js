@@ -2,7 +2,6 @@
 import cors from "cors";
 import express from "express";
 
-
 /*******internal files import here *******/
 import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 import accessoriesRoutes from "./routes/accessoriesRoutes/accessoriesRoutes.js";

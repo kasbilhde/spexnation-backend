@@ -63,6 +63,24 @@ const orderSchema = new mongoose.Schema(
             trim: true,
         },
 
+        currency: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+
+        subtotal: {
+            type: Number,
+            required: true,
+            trim: true,
+        },
+
+        totalItems: {
+            type: Number,
+            required: true,
+            trim: true,
+        },
+
         paymentStatus: {
             type: String,
             required: true,
@@ -77,22 +95,22 @@ const orderSchema = new mongoose.Schema(
             default: "Pending",
         },
 
-        hasData: {
+        items: {
             type: Array,
             default: [],
             required: true,
         },
-        pdf: {
-            type: String,
-            required: false,
-            trim: true,
-        },
+        // pdf: {
+        //     type: String,
+        //     required: false,
+        //     trim: true,
+        // },
 
-        PrescriptionImage: {
-            type: String,
-            required: false,
-            trim: true,
-        },
+        // PrescriptionImage: {
+        //     type: String,
+        //     required: false,
+        //     trim: true,
+        // },
 
         iscoupon: {
             type: Boolean,
@@ -101,14 +119,14 @@ const orderSchema = new mongoose.Schema(
         },
 
 
-        coupondiscount: {
+        coupondiscountPercentage: {
             type: Number,
             required: true,
             default: 0,
         },
 
 
-        grandTotal: {
+        PaymentTotal: {
             type: Number,
             required: true,
             trim: true,
