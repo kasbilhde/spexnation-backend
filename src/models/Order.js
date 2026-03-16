@@ -100,17 +100,13 @@ const orderSchema = new mongoose.Schema(
             default: [],
             required: true,
         },
-        // pdf: {
-        //     type: String,
-        //     required: false,
-        //     trim: true,
-        // },
 
-        // PrescriptionImage: {
-        //     type: String,
-        //     required: false,
-        //     trim: true,
-        // },
+        pdf: {
+            type: String,
+            required: false,
+            trim: true,
+            default: ''
+        },
 
         iscoupon: {
             type: Boolean,

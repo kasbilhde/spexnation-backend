@@ -91,8 +91,6 @@ const getSingleProduct = async (req, res) => {
 
 
 
-
-
 /********** create product controller is here **********/
 const createProduct = async (req, res) => {
 

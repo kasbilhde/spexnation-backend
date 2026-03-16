@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+
 import { Queue } from "bullmq";
 
 export const productQueue = new Queue("product-create", {

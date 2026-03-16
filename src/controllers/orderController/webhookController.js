@@ -1,5 +1,8 @@
 import stripe from "../../config/stripe.js";
 import Order from "../../models/Order.js";
+import { emailSendQueue } from "../../queues/emailsend.queue.js";
+import createPdfFile from "../../utils/pdf-ganaration/createPdfFile.js";
+import uploadSingleFileToCloudinary from "../../utils/uploadSingleFileToCloudinary.js";
 
 const stripeWebhook = async (req, res) => {
 
@@ -14,6 +17,7 @@ const stripeWebhook = async (req, res) => {
 
 
         const orderID = session?.client_reference_id;
+        const paymentStatus = session?.payment_status;
 
         if (!orderID) {
             return res.status(400).json({ error: "Order ID not found in session" });
@@ -21,18 +25,24 @@ const stripeWebhook = async (req, res) => {
 
 
         // get order data
-        //const order = await Order.findOne({ orderId: orderID });
-        //const bodyData = order.toObject();
-
-
+        const order = await Order.findOne({ orderId: orderID });
+        const bodyData = order.toObject();
 
         // ganarate pdf file with prescription information
-        //const file = await createPdfFile(bodyData, orderID);
-        //const base64 = `data:application/pdf;base64,${file}`;
-        //const uploadFile = await uploadSingleFileToCloudinary(base64);
+        const file = await createPdfFile(bodyData, orderID, paymentStatus);
+        const base64 = `data:application/pdf;base64,${file}`;
+        const uploadFile = await uploadSingleFileToCloudinary(base64);
 
-        // send email to the admin
-        //await sendEmail([bodyData.email, process.env.ADMIN_EMAIL], uploadFile);
+
+        // Send job to BullMQ queue
+        const job = await emailSendQueue.add("send-order-email", {
+            clientEmail: bodyData.email,
+            pdf: uploadFile,
+            adminEmail: process.env.ADMIN_EMAIL
+        }, {
+            removeOnComplete: true,
+            removeOnFail: true,
+        });
 
 
 
@@ -42,7 +52,7 @@ const stripeWebhook = async (req, res) => {
             {
                 paymentStatus: "paid",
                 stripeSessionId: session.id,
-                // pdf: uploadFile,
+                pdf: uploadFile,
                 paymentIntent: session.payment_intent
             },
             { new: true }

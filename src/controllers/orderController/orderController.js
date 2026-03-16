@@ -1,5 +1,6 @@
 import stripe from "../../config/stripe.js";
 import Order from "../../models/Order.js";
+import uploadPrescriptionFile from "../../utils/uploadPrescriptionFile.js";
 
 
 /********** get all product controller is here **********/
@@ -138,12 +139,12 @@ const createOrder = async (req, res) => {
         // create unique order id here
         const orderID = `OID-${Date.now().toString().slice(-5)}`;
 
-        // uppload prescription image to cloudinary
-        // const PrescriptionImage = await uploadSingleFileToCloudinary(bodyData?.hasData[0]?.prescriptionImage);
+        //uppload prescription image to cloudinary
+        const bodyDataWithPrescriptionImageLink = await uploadPrescriptionFile(bodyData);
 
 
         // prepere order data object for save in database
-        const value = { orderId: orderID, ...bodyData, };
+        const value = { orderId: orderID, ...bodyDataWithPrescriptionImageLink, };
 
 
         // save order data in database
@@ -151,17 +152,36 @@ const createOrder = async (req, res) => {
 
 
         // line items prepare here
-        const lineItems = bodyData?.items?.map((product) => ({
-            price_data: {
-                currency: "eur",
-                product_data: {
-                    name: product?.name,
-                    images: [product?.image],
+        const lineItems = bodyData?.items?.map((product) => {
+
+
+            let finalPrice = product.price;
+            // Apply coupon safely
+            if (bodyData?.iscoupon) {
+                const discount = (finalPrice * bodyData.coupondiscountPercentage) / 100;
+                finalPrice = finalPrice - discount;
+
+                // Prevent negative prices
+                if (finalPrice < 0) finalPrice = 0;
+            }
+
+            const roundUpfinalPrice = Math.round(finalPrice);
+            const unitAmount = Math.round(roundUpfinalPrice * 100);
+
+            return {
+                price_data: {
+                    currency: "eur",
+                    product_data: {
+                        name: `${product.name}${bodyData?.iscoupon ? ` (With Coupon Discount ${bodyData.coupondiscountPercentage}%)` : ""}`,
+                        images: [product.image],
+                    },
+                    unit_amount: unitAmount,
                 },
-                unit_amount: Math.round(product?.price * 100),
-            },
-            quantity: product?.quantity,
-        }));
+                quantity: product.quantity,
+            };
+        });
+
+
 
 
         // payment code is here
@@ -327,10 +347,7 @@ const reorders = async (req, res) => {
         const bodyData = req.body;
 
 
-        const orderID = `OID-${Date.now().toString().slice(-5)}`;
-
-
-
+        const orderID = `OID - ${Date.now().toString().slice(-5)} `;
 
         const orderData = {
             orderId: orderID,
@@ -343,43 +360,147 @@ const reorders = async (req, res) => {
             state: bodyData?.state,
             country: bodyData?.country,
             zipcode: bodyData?.zipcode,
-            PrescriptionImage: bodyData?.PrescriptionImage,
-            pdf: "https://res.cloudinary.com/drkwi34bs/image/upload/v1773138480/spexnation/f6pzeplfhlluh1na1uvt.pdf",
-            coupondiscount: bodyData?.coupondiscount,
+            currency: bodyData?.currency,
+            pdf: bodyData?.pdf,
+            coupondiscountPercentage: bodyData?.coupondiscountPercentage,
             discountPrice: bodyData?.discountPrice,
-            grandTotal: bodyData?.grandTotal,
+            PaymentTotal: bodyData?.PaymentTotal,
+            totalItems: bodyData?.totalItems,
             iscoupon: bodyData?.iscoupon,
+            subtotal: bodyData?.subtotal,
             paymentIntent: "",
             stripeSessionId: "",
             paymentStatus: "Pending",
             deliveryStatus: "Pending",
-            hasData: bodyData?.hasData,
+            items: bodyData?.items,
         };
 
         const order = await Order.create(orderData);
+
+
+
+
+        // line items prepare here
+        const lineItems = bodyData?.items?.map((product) => {
+
+
+            let finalPrice = product.price;
+            // Apply coupon safely
+            if (bodyData?.iscoupon) {
+                const discount = (finalPrice * bodyData.coupondiscountPercentage) / 100;
+                finalPrice = finalPrice - discount;
+
+                // Prevent negative prices
+                if (finalPrice < 0) finalPrice = 0;
+            }
+
+            const roundUpfinalPrice = Math.round(finalPrice);
+            const unitAmount = Math.round(roundUpfinalPrice * 100);
+
+            return {
+                price_data: {
+                    currency: "eur",
+                    product_data: {
+                        name: `${product.name}${bodyData?.iscoupon ? ` (With Coupon Discount ${bodyData.coupondiscountPercentage}%)` : ""}`,
+                        images: [product.image],
+                    },
+                    unit_amount: unitAmount,
+                },
+                quantity: product.quantity,
+            };
+        });
+
+
 
 
         // payment code is here
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
-            line_items: [
-                {
-                    price_data: {
-                        currency: "eur",
-                        product_data: {
-                            name: bodyData?.hasData[0]?.LenseName,
-                            images: [bodyData?.hasData[0]?.ProductDetails?.product_Images[bodyData?.hasData[0]?.selectedProductIndex].img[0]],
-                        },
-                        unit_amount: Math.round(bodyData?.grandTotal * 100),
-                    },
-                    quantity: 1,
-                }
-            ],
+            line_items: lineItems,
             success_url: `${process.env.LIVE_SITE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.LIVE_SITE_URL}/payment/cancel`,
             client_reference_id: orderID,
         });
+
+
+
+
+
+        // Send success response
+        res.status(201).json({
+            success: true,
+            message: "Re Order created successfully!",
+            url: session.url
+        });
+
+    } catch (err) {
+        console.error("Error creating Reorder:", err.message);
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong while creating the Reorder.",
+        });
+    }
+
+};
+
+
+
+
+
+
+/********** reorder controller is here **********/
+const repayment = async (req, res) => {
+
+
+    try {
+
+        const bodyData = req.body;
+
+        // line items prepare here
+        const lineItems = bodyData?.items?.map((product) => {
+
+
+            let finalPrice = product.price;
+            // Apply coupon safely
+            if (bodyData?.iscoupon) {
+                const discount = (finalPrice * bodyData.coupondiscountPercentage) / 100;
+                finalPrice = finalPrice - discount;
+
+                // Prevent negative prices
+                if (finalPrice < 0) finalPrice = 0;
+            }
+
+            const roundUpfinalPrice = Math.round(finalPrice);
+            const unitAmount = Math.round(roundUpfinalPrice * 100);
+
+            return {
+                price_data: {
+                    currency: "eur",
+                    product_data: {
+                        name: `${product.name}${bodyData?.iscoupon ? ` (With Coupon Discount ${bodyData.coupondiscountPercentage}%)` : ""}`,
+                        images: [product.image],
+                    },
+                    unit_amount: unitAmount,
+                },
+                quantity: product.quantity,
+            };
+        });
+
+
+
+
+        // payment code is here
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            line_items: lineItems,
+            success_url: `${process.env.LIVE_SITE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.LIVE_SITE_URL}/payment/cancel`,
+            client_reference_id: bodyData?.orderId,
+        });
+
+
 
 
 
@@ -407,8 +528,9 @@ const reorders = async (req, res) => {
 
 
 
+
 /*********** modules export from here ************/
 export {
-    createOrder, deleteOrder, getAllOrders, getSingleOrder, myOrders, reorders, updateOrder
+    createOrder, deleteOrder, getAllOrders, getSingleOrder, myOrders, reorders, repayment, updateOrder
 };
 
