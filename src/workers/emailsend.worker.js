@@ -1,5 +1,5 @@
 import { Worker } from "bullmq";
-import sendEmail from "../utils/sendEmail.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 
 new Worker("email-send", async (job) => {

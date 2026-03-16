@@ -1,7 +1,7 @@
 import stripe from "../../config/stripe.js";
 import Order from "../../models/Order.js";
-import { emailSendQueue } from "../../queues/emailsend.queue.js";
 import createPdfFile from "../../utils/pdf-ganaration/createPdfFile.js";
+import { sendEmail } from "../../utils/sendEmail.js";
 import uploadSingleFileToCloudinary from "../../utils/uploadSingleFileToCloudinary.js";
 
 const stripeWebhook = async (req, res) => {
@@ -34,15 +34,22 @@ const stripeWebhook = async (req, res) => {
         const uploadFile = await uploadSingleFileToCloudinary(base64);
 
 
+        // send email to the admin
+        const clientEmail = bodyData.email;
+        const adminEmail = process.env.ADMIN_EMAIL;
+
+
+        await sendEmail([clientEmail, adminEmail], uploadFile);
+
         // Send job to BullMQ queue
-        const job = await emailSendQueue.add("send-order-email", {
-            clientEmail: bodyData.email,
-            pdf: uploadFile,
-            adminEmail: process.env.ADMIN_EMAIL
-        }, {
-            removeOnComplete: true,
-            removeOnFail: true,
-        });
+        // const job = await emailSendQueue.add("send-order-email", {
+        //     clientEmail,
+        //     adminEmail,
+        //     adminEmail: process.env.ADMIN_EMAIL
+        // }, {
+        //     removeOnComplete: true,
+        //     removeOnFail: true,
+        // });
 
 
 
