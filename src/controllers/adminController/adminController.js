@@ -1,4 +1,3 @@
-import getTotalPrice from "../..//utils/getTotalPrice.js";
 import Order from "../../models/Order.js";
 import Product from "../../models/Product.js";
 
@@ -22,16 +21,16 @@ const adminDeshboard = async (req, res) => {
         const totalproduct = product.length;
         const totalOrder = order.length;
         const totalPending = order.filter((order) => order.paymentStatus === "Pending");
-        const totalDelivered = order.filter((order) => order.deliveryStatus === "Dispatched");
+        const totalDelivered = order.filter((order) => order.deliveryStatus === "Delivered");
         const totalPaid = order.filter((order) => order.paymentStatus === "paid");
         const totalRevenueArr = [];
 
+
         for (let i = 0; i < totalPaid?.length; i++) {
-            const total = getTotalPrice(totalPaid[i]?.hasData[0]?.total);
+            const total = totalPaid[i]?.PaymentTotal;
             totalRevenueArr.push(total);
         }
         const totalRevenue = totalRevenueArr?.reduce((a, b) => a + b, 0);
-
 
 
 
@@ -48,7 +47,7 @@ const adminDeshboard = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Error fetching admin deshboard data:", error.message);
+        console.error("Error fetching admin deshboard data:", error);
         res.status(500).json({
             success: false,
             message: "Something went wrong while fetching admin deshboard data.",

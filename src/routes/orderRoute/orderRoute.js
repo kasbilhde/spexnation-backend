@@ -3,6 +3,7 @@ import {
     createOrder, deleteOrder, getAllOrders, getSingleOrder,
     myOrders,
     reorders,
+    repayment,
     updateOrder
 } from "../../controllers/orderController/orderController.js";
 import { authorize, protect } from "../../middlewares/authMiddleware.js";
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.post("/createorder", createOrder);
 router.post("/reorders", protect, authorize("user"), reorders);
+router.post("/repayment", protect, authorize("user"), repayment);
 router.get("/allorders", protect, authorize("admin"), getAllOrders);
 router.get("/myorders/:id", protect, authorize("user"), myOrders);
 router.get("/singleorder/:id", protect, authorize("admin", "user"), getSingleOrder);
