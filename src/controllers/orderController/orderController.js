@@ -170,7 +170,7 @@ const createOrder = async (req, res) => {
 
             return {
                 price_data: {
-                    currency: "eur",
+                    currency: "GBP",
                     product_data: {
                         name: `${product.name}${bodyData?.iscoupon ? ` (With Coupon Discount ${bodyData.coupondiscountPercentage}%)` : ""}`,
                         images: [product.image],
@@ -399,7 +399,7 @@ const reorders = async (req, res) => {
 
             return {
                 price_data: {
-                    currency: "eur",
+                    currency: "GBP",
                     product_data: {
                         name: `${product.name}${bodyData?.iscoupon ? ` (With Coupon Discount ${bodyData.coupondiscountPercentage}%)` : ""}`,
                         images: [product.image],
@@ -476,7 +476,7 @@ const repayment = async (req, res) => {
 
             return {
                 price_data: {
-                    currency: "eur",
+                    currency: "GBP",
                     product_data: {
                         name: `${product.name}${bodyData?.iscoupon ? ` (With Coupon Discount ${bodyData.coupondiscountPercentage}%)` : ""}`,
                         images: [product.image],

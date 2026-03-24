@@ -25,22 +25,15 @@ const sendEmail = async (email, uploadFile) => {
 
 <div style="background-color: #a16207; padding: 20px; text-align: center;">
   <h2 style="color: #ffffff; margin: 0;">Spexnation</h2>
-  <p style="color: #ddd; margin: 5px 0 0;">Trusted Healthcare Partner</p>
+  <p style="color: #ddd; margin: 5px 0 0;">Trusted Glasses Provider</p>
 </div>
 
 
 <div style="padding: 30px;">
   
-  <h3 style="color: #333;">Client Information</h3>
-
-  <p style="margin: 8px 0;"><strong>Name:</strong> ${"Md Emon Hossen"}</p>
-  <p style="margin: 8px 0;"><strong>Address:</strong> ${"Mirpur, Dhaka,Bangladesh"}</p>
+  <h2 style="color: #333; text-align: center;">Thank You for Your Order</h2>
 
   <hr style="margin: 25px 0; border: none; border-top: 1px solid #eee;" />
-
-  <p style="color: #555;">
-    One new order submitted.
-  </p>
 
   <div style="text-align: center; margin: 30px 0;">
     <a href="${uploadFile}" 
@@ -55,9 +48,6 @@ const sendEmail = async (email, uploadFile) => {
             <div style="background-color: #f9fafb; padding: 20px; text-align: center;">
                 <p style="margin: 0; color: #6b7280; font-size: 14px;">
                     © 2026 spexnation
-                </p>
-                <p style="margin: 5px 0 0; color: #9ca3af; font-size: 12px;">
-                    Empowering Better Healthcare Decisions
                 </p>
             </div>
 
