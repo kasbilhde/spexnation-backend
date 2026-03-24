@@ -7,6 +7,7 @@ import { errorHandler, notFound } from "./middlewares/errorMiddleware.js";
 import accessoriesRoutes from "./routes/accessoriesRoutes/accessoriesRoutes.js";
 import adminRoutes from './routes/adminRoutes/adminRoutes.js';
 import authRoutes from './routes/authroute/authUserRoutes.js';
+import bannerRoutes from "./routes/bannerRoutes/bannerRoutes.js";
 import contactRoutes from "./routes/contactRoutes/contactRoutes.js";
 import couponRoutes from "./routes/couponRoutes/couponRoutes.js";
 import healthRoutes from "./routes/health/healthRoute.js";
@@ -95,6 +96,13 @@ app.use("/", couponRoutes);
 
 /********** accessories Routes Define Here *********/
 app.use("/", accessoriesRoutes);
+
+
+
+/********** banner Routes Define Here *********/
+app.use("/", bannerRoutes);
+
+
 
 
 
