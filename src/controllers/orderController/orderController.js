@@ -151,6 +151,9 @@ const createOrder = async (req, res) => {
         const order = await Order.create(value);
 
 
+        console.log(bodyData);
+
+
         // line items prepare here
         const lineItems = bodyData?.items?.map((product) => {
 
@@ -173,7 +176,7 @@ const createOrder = async (req, res) => {
                     currency: "GBP",
                     product_data: {
                         name: `${product.name}${bodyData?.iscoupon ? ` (With Coupon Discount ${bodyData.coupondiscountPercentage}%)` : ""}`,
-                        images: [product.image],
+                        images: [product?.type === "Frame" ? product.image : product.image[0]],
                     },
                     unit_amount: unitAmount,
                 },
