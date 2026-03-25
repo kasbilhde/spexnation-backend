@@ -32,6 +32,9 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
         }
     };
 
+
+    console.log(data);
+
     // ── BRANDING HEADER ──────────────────────────────
     const logoPath = path.join(__dirname, "../../assest/logo.png");
     const logoBase64 = fs.readFileSync(logoPath, { encoding: "base64" });
@@ -84,7 +87,7 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
 
             // Draw red horizontal bar
             const barHeight = 20; // height of the bar
-            doc.setFillColor(209, 172, 108); // red background
+            doc.setFillColor(157, 109, 9); // red background
             doc.rect(40, y, pageW - 80, barHeight, "F"); // "F" = fill rectangle
 
             // Add white text on top
@@ -161,8 +164,13 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
                 checkAddPage();
                 doc.setFont("helvetica", "normal");
                 doc.text(lineItem?.target, 40, y);
-                doc.text(` : ${lineItem?.name}`, 150, y);
+                doc.text(` : ${lineItem?.name} `, 150, y);
                 doc.text(`£${lineItem?.price}`, pageW - 40, y, { align: "right" });
+                if (lineItem?.target === "Frame") {
+                    y += 20;
+                    doc.text("Frame Colour", 40, y);
+                    doc.text(` : ${item?.AllLensInfo?.LenColor[0]?.name} `, 150, y);
+                }
 
                 if (lineItem?.target === "Tints") {
                     y += 20;
@@ -183,7 +191,7 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
 
             // Draw red horizontal bar
             const barHeight = 20; // height of the bar
-            doc.setFillColor(209, 172, 108); // red background
+            doc.setFillColor(157, 109, 9); // red background
             doc.rect(40, y, pageW - 80, barHeight, "F"); // "F" = fill rectangle
 
             // Add white text on top
