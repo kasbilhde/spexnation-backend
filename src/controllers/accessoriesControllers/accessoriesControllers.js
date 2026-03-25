@@ -5,9 +5,6 @@ import AccessoriesSchema from "../../validationSchema/Accessories.validation.js"
 
 
 
-
-
-
 /********** get all getAllAccessories controller here **************/
 const getAllAccessories = async (req, res) => {
 
@@ -21,6 +18,45 @@ const getAllAccessories = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: "There was a Server Error" });
+    }
+}
+
+
+
+/********** get all getAllAccessories controller here **************/
+const getSingleAccessories = async (req, res) => {
+
+    try {
+        const { id } = req.params;
+
+        // Validate ID format
+        if (!id || id.length !== 24) {
+            return res.status(400).json({ error: "Invalid Accessories ID format." });
+        }
+
+
+        // Find product by ID
+        const accessories = await Accessories.findById(id).lean();
+
+
+
+        if (!accessories) {
+            return res.status(404).json({ error: "Accessories not found." });
+        }
+
+
+
+        // Return the product
+        res.status(200).json({
+            success: true,
+            data: accessories,
+        });
+    } catch (error) {
+        console.error("Error fetching Accessories:", error.message);
+        res.status(500).json({
+            success: false,
+            error: "Something went wrong while fetching the Accessories!",
+        });
     }
 }
 
@@ -54,7 +90,16 @@ const createAccessories = async (req, res) => {
 
 
         // uppload accessories image to cloudinary
-        const accessoriesImage = await uploadAccessoriesFileToCloudinary(img);
+
+        const accessoriesImage = [];
+        for (const imge of img) {
+            try {
+                const sinImage = await uploadAccessoriesFileToCloudinary(imge);
+                accessoriesImage.push(sinImage);
+            } catch (err) {
+                console.error("Upload failed:", err);
+            }
+        }
 
 
         // Create user with hashed password
@@ -98,8 +143,21 @@ const updateAccessories = async (req, res) => {
 
 
         const { name, price, description, img, productType } = req.body;
+
+
+
         // uppload accessories image to cloudinary
-        const accessoriesImage = await uploadAccessoriesFileToCloudinary(img);
+
+        const accessoriesImage = [];
+        for (const imge of img) {
+            try {
+                const sinImage = await uploadAccessoriesFileToCloudinary(imge);
+                accessoriesImage.push(sinImage);
+            } catch (err) {
+                console.error("Upload failed:", err);
+            }
+        }
+
 
         const updateDataObject = {
             name: name,
@@ -145,7 +203,6 @@ const updateAccessories = async (req, res) => {
     }
 
 };
-
 
 
 
@@ -213,5 +270,5 @@ const deleteAccessories = async (req, res) => {
 
 
 
-export { createAccessories, deleteAccessories, getAllAccessories, updateAccessories };
+export { createAccessories, deleteAccessories, getAllAccessories, getSingleAccessories, updateAccessories };
 
