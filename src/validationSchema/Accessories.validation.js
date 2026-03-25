@@ -28,11 +28,10 @@ const AccessoriesSchema = Joi.object({
             "string.min": "Accessories Discriptions should be at least 5 characters.",
         }),
 
-    img: Joi.string()
-        .trim()
+    img: Joi.array()
         .required()
         .messages({
-            "string.empty": "Image is required.",
+            "array.empty": "Image is required.",
         }),
 
     productType: Joi.string()

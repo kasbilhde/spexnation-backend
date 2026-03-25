@@ -24,9 +24,8 @@ const accessoriesSchema = new mongoose.Schema(
         },
 
         img: {
-            type: String,
-            required: [true, "Image is required"],
-            trim: true,
+            type: Array,
+            required: true
         },
 
         productType: {

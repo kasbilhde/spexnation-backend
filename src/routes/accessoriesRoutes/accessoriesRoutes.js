@@ -1,5 +1,5 @@
 import express from "express";
-import { createAccessories, deleteAccessories, getAllAccessories, updateAccessories } from "../../controllers/accessoriesControllers/accessoriesControllers.js";
+import { createAccessories, deleteAccessories, getAllAccessories, getSingleAccessories, updateAccessories } from "../../controllers/accessoriesControllers/accessoriesControllers.js";
 import { authorize, protect } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
@@ -8,6 +8,7 @@ const router = express.Router();
 
 
 router.get("/allaccessories", getAllAccessories);
+router.get("/singleaccessories/:id", getSingleAccessories);
 router.post("/addaccessories", protect, authorize("admin"), createAccessories);
 router.put("/updateaccessories/:id", protect, authorize("admin"), updateAccessories);
 router.delete("/deleteaccessories/:id", protect, authorize("admin"), deleteAccessories);
