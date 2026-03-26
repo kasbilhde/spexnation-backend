@@ -40,11 +40,7 @@ const contactSchema = new mongoose.Schema(
         },
 
         oid: {
-            type: String,
-            required: [false, "Order ID is required"],
-            trim: true,
-            minlength: [5, "Order ID should be at least 5 characters"],
-            maxlength: [100, "Order ID cannot exceed 100 characters"],
+            type: String
         },
     },
     {
