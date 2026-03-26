@@ -38,6 +38,14 @@ const contactSchema = new mongoose.Schema(
             minlength: [5, "Message should be at least 5 characters"],
             maxlength: [5000, "Message cannot exceed 5000 characters"],
         },
+
+        oid: {
+            type: String,
+            required: [false, "Order ID is required"],
+            trim: true,
+            minlength: [5, "Order ID should be at least 5 characters"],
+            maxlength: [100, "Order ID cannot exceed 100 characters"],
+        },
     },
     {
         timestamps: true, // adds createdAt and updatedAt

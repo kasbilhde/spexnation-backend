@@ -18,7 +18,7 @@ const sendEmail = async (email, otp) => {
             subject: 'Password Reset OTP',
             html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333;">Password Reset Request from HS Review App </h2>
+          <h2 style="color: #333;">Password Reset Request from Spexnation </h2>
           <p>You have requested to reset your password. Use the OTP below to proceed:</p>
           <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0;">
             ${otp}

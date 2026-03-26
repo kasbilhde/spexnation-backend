@@ -21,7 +21,6 @@ const AccessoriesSchema = Joi.object({
     description: Joi.string()
         .trim()
         .min(5)
-        .max(100)
         .required()
         .messages({
             "string.empty": "Accessories Discriptions is required.",
