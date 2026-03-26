@@ -30,10 +30,7 @@ const contactSchema = Joi.object({
             "string.min": "Message should be at least 5 characters.",
         }),
 
-    oid: Joi.string()
-        .trim()
-        .min(5)
-        .max(500)
+    oid: Joi.string().allow("").optional(),
 });
 
 export default contactSchema;

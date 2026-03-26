@@ -67,6 +67,7 @@ const createContact = async (req, res) => {
 
         // If validation fails, return 400 with all validation errors
         if (error) {
+            console.log(error);
             const validationErrors = error.details.map((err) => err.message);
             return res.status(400).json({
                 success: false,
