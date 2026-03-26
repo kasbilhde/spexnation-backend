@@ -1,4 +1,5 @@
 import Contact from "../../models/Contact.js";
+import ContantEmailSender from "../../utils/ContantEmailSender.js";
 import contactSchema from "../../validationSchema//ContactSchama.js";
 
 
@@ -80,12 +81,21 @@ const createContact = async (req, res) => {
             email: value.email,
             subject: 'Subject',
             message: value.message,
+            oid: value?.oid
         };
 
 
 
+        const contactEmail = process.env.CONTACT_EMAIL;
+
+
+
+        await ContantEmailSender(contactEmail, saveableData);
+
+
+
         // Create product in database
-        const product = await Contact.create(saveableData);
+        //const product = await Contact.create(saveableData);
 
 
 
@@ -93,7 +103,6 @@ const createContact = async (req, res) => {
         res.status(201).json({
             success: true,
             message: "Contact created successfully!",
-            data: product,
         });
 
     } catch (err) {

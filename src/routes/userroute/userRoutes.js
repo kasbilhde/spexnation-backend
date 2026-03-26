@@ -6,11 +6,9 @@ import { authorize, protect } from "../../middlewares/authMiddleware.js";
 const router = express.Router();
 
 
-
 router.get("/allusers", protect, authorize("admin",), getAllUsers);
 router.get("/user/:id", protect, authorize("admin", "user"), protect, getUser);
-router.put("/user/:id", protect, authorize("admin", "user"), protect, updateUser);
-
+router.put("/user/:id", protect, authorize("admin"), protect, updateUser);
 
 
 export default router;

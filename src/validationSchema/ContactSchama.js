@@ -19,15 +19,6 @@ const contactSchema = Joi.object({
             "string.email": "Invalid email format.",
         }),
 
-    subject: Joi.string()
-        .trim()
-        .min(5)
-        .max(100)
-        .optional()
-        .messages({
-            "string.empty": "Subject is required.",
-            "string.min": "Subject should be at least 5 characters.",
-        }),
 
     message: Joi.string()
         .trim()
@@ -38,6 +29,11 @@ const contactSchema = Joi.object({
             "string.empty": "Message is required.",
             "string.min": "Message should be at least 5 characters.",
         }),
+
+    oid: Joi.string()
+        .trim()
+        .min(5)
+        .max(500)
 });
 
 export default contactSchema;
