@@ -16,6 +16,13 @@ const accessoriesSchema = new mongoose.Schema(
             required: true
         },
 
+        shortDes: {
+            type: String,
+            required: [true, "Short description is required"],
+            trim: true,
+            minlength: [1, "Short description should be at least 1 characters"],
+        },
+
         description: {
             type: String,
             required: [true, "Description is required"],

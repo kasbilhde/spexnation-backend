@@ -73,7 +73,7 @@ const createAccessories = async (req, res) => {
 
 
         // Validate body data using Joi schema
-        const { error, value: { name, price, description, img, productType } } = AccessoriesSchema.validate(req.body, { abortEarly: false });
+        const { error, value: { name, price, description, shortDes, img, productType } } = AccessoriesSchema.validate(req.body, { abortEarly: false });
 
 
         // If validation fails, return 400 with all validation errors
@@ -106,6 +106,7 @@ const createAccessories = async (req, res) => {
         const accessories = await Accessories.create({
             name,
             price,
+            shortDes,
             description,
             img: accessoriesImage,
             productType
@@ -142,7 +143,7 @@ const updateAccessories = async (req, res) => {
 
 
 
-        const { name, price, description, img, productType } = req.body;
+        const { name, price, description, shortDes, img, productType } = req.body;
 
 
 
@@ -162,6 +163,7 @@ const updateAccessories = async (req, res) => {
         const updateDataObject = {
             name: name,
             price: price,
+            shortDes: shortDes,
             description: description,
             img: accessoriesImage,
             productType: productType
