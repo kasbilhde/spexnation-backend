@@ -18,13 +18,23 @@ const AccessoriesSchema = Joi.object({
             "string.empty": "Price is required.",
             "string.min": "Price should be at least 1 characters.",
         }),
+
+    shortDes: Joi.string()
+        .trim()
+        .min(1)
+        .required()
+        .messages({
+            "string.empty": "Accessories Short Discriptions is required.",
+            "string.min": "Accessories Short Discriptions should be at least 5 characters.",
+        }),
+
     description: Joi.string()
         .trim()
         .min(5)
         .required()
         .messages({
-            "string.empty": "Accessories Discriptions is required.",
-            "string.min": "Accessories Discriptions should be at least 5 characters.",
+            "string.empty": "Accessories Long Discriptions is required.",
+            "string.min": "Accessories Long Discriptions should be at least 5 characters.",
         }),
 
     img: Joi.array()
