@@ -173,9 +173,11 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
                 }
 
                 if (lineItem?.target === "Tints") {
-                    y += 20;
-                    doc.text("Colour", 40, y);
-                    doc.text(` : ${lineItem?.name === "Sunglasses" ? capitalizeFirstLetter(singleItemData?.color) : singleItemData?.color}`, 150, y);
+                    if (lineItem?.name !== "Clear") {
+                        y += 20;
+                        doc.text("Colour", 40, y);
+                        doc.text(` : ${lineItem?.name === "Sunglasses" ? capitalizeFirstLetter(singleItemData?.color) : singleItemData?.color}`, 150, y);
+                    }
                     if (lineItem?.name === "Sunglasses") {
                         y += 20;
                         doc.text("Darkness", 40, y);
