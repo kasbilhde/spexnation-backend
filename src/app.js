@@ -36,6 +36,7 @@ app.use(express.urlencoded({ limit: "30mb", extended: true }));
 /*********** CORS  Middleware Here ***********/
 const allowedOrigins = [
     process.env.LIVE_SITE_URL,
+    process.env.LIVE_SITE_URL1,
     "http://localhost:3000",
 ];
 app.use(
