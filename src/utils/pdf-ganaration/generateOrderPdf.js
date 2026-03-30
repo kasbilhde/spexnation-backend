@@ -171,6 +171,11 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
                     doc.text("Frame Colour", 40, y);
                     doc.text(` : ${item?.AllLensInfo?.LenColor[0]?.name} `, 150, y);
                 }
+                if (lineItem?.target === "Frame") {
+                    y += 20;
+                    doc.text("Glasses Use", 40, y);
+                    doc.text(` : ${item?.AllLensInfo?.LenseUseCase == "noprescription" ? "No Prescription" : item?.AllLensInfo?.LenseUseCase == "computerorintermediate" ? "Computer/Intermediate" : item?.AllLensInfo?.LenseUseCase} `, 150, y);
+                }
 
                 if (lineItem?.target === "Tints") {
                     if (lineItem?.name !== "Clear") {
