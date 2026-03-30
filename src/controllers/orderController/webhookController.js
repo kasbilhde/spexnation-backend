@@ -36,7 +36,7 @@ const stripeWebhook = async (req, res) => {
 
         // send email to the admin
         const clientEmail = bodyData.email;
-        const adminEmail = process.env.ADMIN_EMAIL;
+        const adminEmail = process.env.EMAIL_FOR_ORDER;
 
 
         await sendEmail([clientEmail, adminEmail], uploadFile);
