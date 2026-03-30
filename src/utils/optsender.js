@@ -4,16 +4,19 @@ const sendEmail = async (email, otp) => {
     try {
         // Create transporter
         const transporter = nodemailer.createTransport({
-            service: 'gmail', // or 'outlook', 'yahoo', etc.
+            host: "smtp.hostinger.com",
+            port: 465,
+            secure: true,
             auth: {
-                user: process.env.EMAIL_USER, // Your email
-                pass: process.env.EMAIL_PASSWORD, // Your email password or app password
+                user: process.env.EMAIL_FOR_CONTACT_FORM, // Your email
+                pass: process.env.PASSWORD_FOR_CONTACT_FORM, // Your email password or app password
             },
         });
 
+
         // Email options
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: process.env.EMAIL_FOR_CONTACT_FORM,
             to: email,
             subject: 'Password Reset OTP',
             html: `

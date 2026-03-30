@@ -87,9 +87,7 @@ const createContact = async (req, res) => {
 
 
 
-        const contactEmail = process.env.CONTACT_EMAIL;
-
-
+        const contactEmail = process.env.EMAIL_FOR_CONTACT_FORM;
 
         await ContantEmailSender(contactEmail, saveableData);
 
