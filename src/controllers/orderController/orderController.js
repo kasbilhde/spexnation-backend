@@ -192,8 +192,8 @@ const createOrder = async (req, res) => {
             payment_method_types: ["card"],
             mode: "payment",
             line_items: lineItems,
-            success_url: `${process.env.LIVE_SITE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.LIVE_SITE_URL}/payment/cancel`,
+            success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/payment/cancel`,
             client_reference_id: orderID,
         });
 
@@ -421,8 +421,8 @@ const reorders = async (req, res) => {
             payment_method_types: ["card"],
             mode: "payment",
             line_items: lineItems,
-            success_url: `${process.env.LIVE_SITE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.LIVE_SITE_URL}/payment/cancel`,
+            success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/payment/cancel`,
             client_reference_id: orderID,
         });
 
@@ -498,8 +498,8 @@ const repayment = async (req, res) => {
             payment_method_types: ["card"],
             mode: "payment",
             line_items: lineItems,
-            success_url: `${process.env.LIVE_SITE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.LIVE_SITE_URL}/payment/cancel`,
+            success_url: `${process.env.FRONTEND_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/payment/cancel`,
             client_reference_id: bodyData?.orderId,
         });
 
@@ -523,7 +523,6 @@ const repayment = async (req, res) => {
     }
 
 };
-
 
 
 
