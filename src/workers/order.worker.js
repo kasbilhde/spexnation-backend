@@ -31,6 +31,10 @@ new Worker("order-create", async (job) => {
             port: process.env.REDIS_PORT,
             password: process.env.REDIS_PASSWORD,
         },
+
+        // ✅ CLEANUP SETTINGS
+        removeOnComplete: true, // removes job immediately after success
+        removeOnFail: 5,       // keep last 5 failed jobs (for debugging)
     }
 );
 
