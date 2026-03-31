@@ -4,8 +4,6 @@ import { sendEmail } from "../utils/sendEmail.js";
 
 new Worker("email-send", async (job) => {
 
-    console.log("Email worker started...");
-    console.log(job);
 
     const { clientEmail, pdf, adminEmail } = job.data;
 
@@ -21,6 +19,10 @@ new Worker("email-send", async (job) => {
             port: process.env.REDIS_PORT,
             password: process.env.REDIS_PASSWORD,
         },
+
+        // ✅ CLEANUP SETTINGS
+        removeOnComplete: true, // removes job immediately after success
+        removeOnFail: 5,       // keep last 5 failed jobs (for debugging)
     }
 );
 
