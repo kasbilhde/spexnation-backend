@@ -117,6 +117,10 @@ const createProduct = async (req, res) => {
     // Send job to BullMQ queue
     const job = await productQueue.add("create-product", {
       productData: value
+    }, {
+      jobId: value.ProductTitle,
+      removeOnComplete: true,
+      removeOnFail: 5,
     });
 
 
