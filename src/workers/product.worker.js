@@ -33,8 +33,8 @@ new Worker("product-create", async (job) => {
         },
 
         // ✅ CLEANUP SETTINGS
-        removeOnComplete: true, // removes job immediately after success
-        removeOnFail: 5,       // keep last 5 failed jobs (for debugging)
+        //removeOnComplete: true, // removes job immediately after success
+        // removeOnFail: 5,       // keep last 5 failed jobs (for debugging)
     }
 );
 

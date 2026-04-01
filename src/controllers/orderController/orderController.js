@@ -151,8 +151,6 @@ const createOrder = async (req, res) => {
         const order = await Order.create(value);
 
 
-        console.log(bodyData);
-
 
         // line items prepare here
         const lineItems = bodyData?.items?.map((product) => {
