@@ -33,8 +33,6 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
     };
 
 
-    console.log(data);
-
     // ── BRANDING HEADER ──────────────────────────────
     const logoPath = path.join(__dirname, "../../assest/logo.png");
     const logoBase64 = fs.readFileSync(logoPath, { encoding: "base64" });
@@ -106,48 +104,47 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
             doc.text("Prescription Details", 40, y);
             y += 10;
 
-            // PRESCRIPTION TABLE
-            const rxHead = [["Eyes", "SPH", "CYL", "Axis", "ADD", singleItemData.pdType == "1" ? "S-PD" : "D-PD"]];
-            const isDualPD = singleItemData.pdType == "2";
 
-            const odRow = ["Right (OD)", singleItemData?.sph?.rightSph, singleItemData?.cyl?.rightCyl, singleItemData?.axis?.rightAxis, singleItemData?.add?.rightAdd];
-            const osRow = ["Left (OS)", singleItemData?.sph?.leftSph, singleItemData?.cyl?.leftCyl, singleItemData?.axis?.leftAxis, singleItemData?.add?.leftAdd];
 
-            if (!isDualPD) {
-                odRow.push({ content: singleItemData?.singlePD, rowSpan: 2 });
+            if (singleItemData?.sunglassesType === "Non-Prescription Sunglasses") {
+
+                y += 20;
+                doc.text("Frame:", 40, y);
+                doc.text(` : ${item?.name} `, 150, y);
+                y += 20;
+                doc.text("Product Brand:", 40, y);
+                doc.text(` : ${singleItemData?.brand} `, 150, y);
+                y += 20;
+                doc.text("Sunglassess Type:", 40, y);
+                doc.text(` : ${singleItemData?.sunglassesType} `, 150, y);
+                y += 20;
+
+
             } else {
-                odRow.push(singleItemData?.dualPD?.rightPD);
-                osRow.push(singleItemData?.dualPD?.leftPD);
-            }
 
-            const rxBody = [odRow, osRow];
 
-            autoTable(doc, {
-                startY: y,
-                head: rxHead,
-                body: rxBody,
-                theme: "grid",
-                margin: { left: 40, right: 40 },
-                headStyles: { fillColor: [245, 245, 245], textColor: [40, 40, 40], fontStyle: "bold", halign: "center", fontSize: 10 },
-                bodyStyles: { halign: "center", textColor: [50, 50, 50], fontSize: 10 },
-                columnStyles: { 0: { halign: "center", fontStyle: "bold" } },
-                styles: { lineColor: [200, 200, 200], lineWidth: 0.5 },
-            });
 
-            y = doc.lastAutoTable.finalY + 20;
 
-            // PRISM TABLE (optional)
-            if (singleItemData?.addPrism) {
-                const prismHead = [["Eyes", "Vertical Prism", "Base Direction", "Horizontal Prism", "Base Direction"]];
-                const prismBody = [
-                    ["Right (OD)", singleItemData?.rightPrism?.vertical, singleItemData?.rightPrism?.vBaseDirection, singleItemData?.rightPrism?.horizontal, singleItemData?.rightPrism?.hBaseDirection],
-                    ["Left (OS)", singleItemData?.leftPrism?.vertical, singleItemData?.leftPrism?.vBaseDirection, singleItemData?.leftPrism?.horizontal, singleItemData?.leftPrism?.hBaseDirection],
-                ];
+                // PRESCRIPTION TABLE
+                const rxHead = [["Eyes", "SPH", "CYL", "Axis", "ADD", singleItemData.pdType == "1" ? "S-PD" : "D-PD"]];
+                const isDualPD = singleItemData.pdType == "2";
+
+                const odRow = ["Right (OD)", singleItemData?.sph?.rightSph, singleItemData?.cyl?.rightCyl, singleItemData?.axis?.rightAxis, singleItemData?.add?.rightAdd];
+                const osRow = ["Left (OS)", singleItemData?.sph?.leftSph, singleItemData?.cyl?.leftCyl, singleItemData?.axis?.leftAxis, singleItemData?.add?.leftAdd];
+
+                if (!isDualPD) {
+                    odRow.push({ content: singleItemData?.singlePD, rowSpan: 2 });
+                } else {
+                    odRow.push(singleItemData?.dualPD?.rightPD);
+                    osRow.push(singleItemData?.dualPD?.leftPD);
+                }
+
+                const rxBody = [odRow, osRow];
 
                 autoTable(doc, {
                     startY: y,
-                    head: prismHead,
-                    body: prismBody,
+                    head: rxHead,
+                    body: rxBody,
                     theme: "grid",
                     margin: { left: 40, right: 40 },
                     headStyles: { fillColor: [245, 245, 245], textColor: [40, 40, 40], fontStyle: "bold", halign: "center", fontSize: 10 },
@@ -157,41 +154,69 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
                 });
 
                 y = doc.lastAutoTable.finalY + 20;
+
+                // PRISM TABLE (optional)
+                if (singleItemData?.addPrism) {
+                    const prismHead = [["Eyes", "Vertical Prism", "Base Direction", "Horizontal Prism", "Base Direction"]];
+                    const prismBody = [
+                        ["Right (OD)", singleItemData?.rightPrism?.vertical, singleItemData?.rightPrism?.vBaseDirection, singleItemData?.rightPrism?.horizontal, singleItemData?.rightPrism?.hBaseDirection],
+                        ["Left (OS)", singleItemData?.leftPrism?.vertical, singleItemData?.leftPrism?.vBaseDirection, singleItemData?.leftPrism?.horizontal, singleItemData?.leftPrism?.hBaseDirection],
+                    ];
+
+                    autoTable(doc, {
+                        startY: y,
+                        head: prismHead,
+                        body: prismBody,
+                        theme: "grid",
+                        margin: { left: 40, right: 40 },
+                        headStyles: { fillColor: [245, 245, 245], textColor: [40, 40, 40], fontStyle: "bold", halign: "center", fontSize: 10 },
+                        bodyStyles: { halign: "center", textColor: [50, 50, 50], fontSize: 10 },
+                        columnStyles: { 0: { halign: "center", fontStyle: "bold" } },
+                        styles: { lineColor: [200, 200, 200], lineWidth: 0.5 },
+                    });
+
+                    y = doc.lastAutoTable.finalY + 20;
+                }
+
+                // LINE ITEMS
+                singleItemData.total.forEach((lineItem) => {
+                    checkAddPage();
+                    doc.setFont("helvetica", "normal");
+                    doc.text(lineItem?.target, 40, y);
+                    doc.text(` : ${lineItem?.name} `, 150, y);
+                    doc.text(`£${lineItem?.price}`, pageW - 40, y, { align: "right" });
+                    if (lineItem?.target === "Frame") {
+                        y += 20;
+                        doc.text("Frame Colour", 40, y);
+                        doc.text(` : ${item?.AllLensInfo?.LenColor[0]?.name} `, 150, y);
+                    }
+                    if (lineItem?.target === "Frame") {
+                        y += 20;
+                        doc.text("Glasses Use", 40, y);
+                        doc.text(` : ${item?.AllLensInfo?.LenseUseCase == "noprescription" ? "No Prescription" : item?.AllLensInfo?.LenseUseCase == "computerorintermediate" ? "Computer/Intermediate" : item?.AllLensInfo?.LenseUseCase} `, 150, y);
+                    }
+
+                    if (lineItem?.target === "Tints") {
+                        if (lineItem?.name !== "Clear") {
+                            y += 20;
+                            doc.text("Colour", 40, y);
+                            doc.text(` : ${lineItem?.name === "Sunglasses" ? capitalizeFirstLetter(singleItemData?.color) : singleItemData?.color}`, 150, y);
+                        }
+                        if (lineItem?.name === "Sunglasses") {
+                            y += 20;
+                            doc.text("Darkness", 40, y);
+                            doc.text(` : ${capitalizeFirstLetter(singleItemData?.darkness)}`, 150, y);
+                        }
+                    }
+
+                    y += 20;
+                });
+
+
+
             }
 
-            // LINE ITEMS
-            singleItemData.total.forEach((lineItem) => {
-                checkAddPage();
-                doc.setFont("helvetica", "normal");
-                doc.text(lineItem?.target, 40, y);
-                doc.text(` : ${lineItem?.name} `, 150, y);
-                doc.text(`£${lineItem?.price}`, pageW - 40, y, { align: "right" });
-                if (lineItem?.target === "Frame") {
-                    y += 20;
-                    doc.text("Frame Colour", 40, y);
-                    doc.text(` : ${item?.AllLensInfo?.LenColor[0]?.name} `, 150, y);
-                }
-                if (lineItem?.target === "Frame") {
-                    y += 20;
-                    doc.text("Glasses Use", 40, y);
-                    doc.text(` : ${item?.AllLensInfo?.LenseUseCase == "noprescription" ? "No Prescription" : item?.AllLensInfo?.LenseUseCase == "computerorintermediate" ? "Computer/Intermediate" : item?.AllLensInfo?.LenseUseCase} `, 150, y);
-                }
 
-                if (lineItem?.target === "Tints") {
-                    if (lineItem?.name !== "Clear") {
-                        y += 20;
-                        doc.text("Colour", 40, y);
-                        doc.text(` : ${lineItem?.name === "Sunglasses" ? capitalizeFirstLetter(singleItemData?.color) : singleItemData?.color}`, 150, y);
-                    }
-                    if (lineItem?.name === "Sunglasses") {
-                        y += 20;
-                        doc.text("Darkness", 40, y);
-                        doc.text(` : ${capitalizeFirstLetter(singleItemData?.darkness)}`, 150, y);
-                    }
-                }
-
-                y += 20;
-            });
         } else {
 
             y += 5;

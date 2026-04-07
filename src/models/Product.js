@@ -19,6 +19,12 @@ const productSchema = new mongoose.Schema(
             trim: true,
         },
 
+        sunglassesType: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+
         productType: {
             type: String,
             required: true,
