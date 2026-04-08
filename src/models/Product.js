@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema(
 
         sunglassesType: {
             type: String,
-            required: true,
+            required: false,
             trim: true,
         },
 
