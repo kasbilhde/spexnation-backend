@@ -5,7 +5,7 @@ const productSchema = Joi.object({
 
     brand: Joi.string().min(2).max(100).required(),
 
-    sunglassesType: Joi.string().min(2).max(100).required(),
+    sunglassesType: Joi.string().min(2).max(100).allow("").optional(),
 
     productType: Joi.string().min(2).max(100).required(),
 

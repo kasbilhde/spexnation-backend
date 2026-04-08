@@ -165,7 +165,7 @@ const updateProduct = async (req, res) => {
 
 
 
-    const { ProductTitle, brand, shortdes, product_price, gender, weight, meterial, fType, fShape, lensWidth, lensHeight, BridgeWidth, ArmLength, product_Discription, product_Images } = req.body;
+    const { ProductTitle, brand, shortdes, product_price, gender, weight, meterial, fType, fShape, lensWidth, lensHeight, BridgeWidth, ArmLength, product_Discription, product_Images, sunglassesType } = req.body;
 
 
     const pt_Images = await uploadFilesToCloudinary(product_Images);
@@ -173,6 +173,7 @@ const updateProduct = async (req, res) => {
     const value = {
       ProductTitle,
       brand,
+      sunglassesType,
       shortdes,
       product_price,
       gender,
