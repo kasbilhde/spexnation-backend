@@ -14,6 +14,7 @@ import healthRoutes from "./routes/health/healthRoute.js";
 import orderRoute from "./routes/orderRoute/orderRoute.js";
 import productRoutes from './routes/productroute/productRoute.js';
 import reviewRoutes from './routes/review/reviewRoutes.js';
+import settingsRoutes from "./routes/settingsRoutes/settingsRoutes.js";
 import stripeRoutes from "./routes/stripeRoutes/stripeRoutes.js";
 import userRoutes from './routes/userroute/userRoutes.js';
 import "./workers/product.worker.js";
@@ -103,6 +104,9 @@ app.use("/", accessoriesRoutes);
 app.use("/", bannerRoutes);
 
 
+
+/********** banner Routes Define Here *********/
+app.use("/", settingsRoutes);
 
 
 

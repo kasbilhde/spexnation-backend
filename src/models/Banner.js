@@ -17,6 +17,12 @@ const bannersSchema = new mongoose.Schema(
             trim: true,
         },
 
+        smallimg: {
+            type: String,
+            required: [true, "Small Image is required"],
+            trim: true,
+        },
+
         productType: {
             type: String,
             required: true,
