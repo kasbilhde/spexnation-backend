@@ -11,11 +11,11 @@ import uploadAccessoriesFileToCloudinary from "../../utils/uploadAccessoriesFile
 const allbanner = async (req, res) => {
 
     try {
-        const users = await Banner.find();
+        const banner = await Banner.find();
         res.json({
             success: true,
             message: "All Banner fetched successfully",
-            data: users
+            data: banner
         });
 
     } catch (error) {
@@ -36,17 +36,18 @@ const addbanner = async (req, res) => {
 
 
         // Validate body data using Joi schema
-        const { Route, img, productType } = req.body;
+        const { Route, img, smallimg, productType } = req.body;
 
 
         // uppload accessories image to cloudinary
         const bannerImage = await uploadAccessoriesFileToCloudinary(img);
-
+        const bnnarsmallimg = await uploadAccessoriesFileToCloudinary(smallimg);
 
         // Create user with hashed password
         const banners = await Banner.create({
             Route,
             img: bannerImage,
+            smallimg: bnnarsmallimg,
             productType
         });
 
@@ -190,7 +191,6 @@ const deletebanner = async (req, res) => {
 
 
 };
-
 
 
 

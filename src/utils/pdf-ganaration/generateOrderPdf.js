@@ -106,7 +106,7 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
 
 
 
-            if (singleItemData?.sunglassesType === "Non-Prescription Sunglasses") {
+            if (singleItemData?.frameType === "Non-Prescription Sunglasses") {
 
                 y += 20;
                 doc.text("Frame:", 40, y);
@@ -116,13 +116,11 @@ async function generateOrderPdf(data, orderID, paymentStatus) {
                 doc.text(` : ${singleItemData?.brand} `, 150, y);
                 y += 20;
                 doc.text("Sunglassess Type:", 40, y);
-                doc.text(` : ${singleItemData?.sunglassesType} `, 150, y);
+                doc.text(` : ${singleItemData?.frameType} `, 150, y);
                 y += 20;
 
 
             } else {
-
-
 
 
                 // PRESCRIPTION TABLE

@@ -3,6 +3,8 @@ import Joi from "joi";
 const productSchema = Joi.object({
 
 
+    frameType: Joi.string().min(2).max(100).required(),
+
     brand: Joi.string().min(2).max(100).required(),
 
     sunglassesType: Joi.string().min(2).max(100).allow("").optional(),

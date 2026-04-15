@@ -13,15 +13,14 @@ const fileSchema = new mongoose.Schema(
 const productSchema = new mongoose.Schema(
     {
 
-        brand: {
+        frameType: {
             type: String,
             required: true,
             trim: true,
         },
-
-        sunglassesType: {
+        brand: {
             type: String,
-            required: false,
+            required: true,
             trim: true,
         },
 
@@ -52,8 +51,6 @@ const productSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
-
-
 
 
         gender: {

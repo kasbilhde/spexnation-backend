@@ -40,6 +40,125 @@ const getAllProduct = async (req, res) => {
 
 
 
+/********** get all product for mens controller is here **********/
+const getAllProductMens = async (req, res) => {
+
+
+  try {
+
+
+    // For each product, attach its reviews and reviewer info
+    const product = await Product.find({}).sort({ createdAt: -1 }).lean();
+
+
+    const filterMensProduct = product.filter((item) => {
+      return item.gender === "Mens" && item.frameType === "Frame";
+    });
+
+
+    // Return response
+    res.status(200).json({
+      success: true,
+      message: "Products fetched successfully!",
+      data: filterMensProduct,
+    });
+
+  } catch (error) {
+    console.error("Error fetching products:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while fetching products.",
+    });
+  }
+
+
+};
+
+
+
+
+/********** get all product for womens controller is here **********/
+const getAllProductWomens = async (req, res) => {
+
+
+  try {
+
+
+    // For each product, attach its reviews and reviewer info
+    const product = await Product.find({}).sort({ createdAt: -1 }).lean();
+
+
+
+    const filterWomensProduct = product.filter((item) => {
+      return item.gender === "Womens" && item.frameType === "Frame";
+    });
+
+
+
+
+    // Return response
+    res.status(200).json({
+      success: true,
+      message: "Products fetched successfully!",
+      data: filterWomensProduct,
+    });
+
+  } catch (error) {
+    console.error("Error fetching products:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while fetching products.",
+    });
+  }
+
+
+};
+
+
+
+
+
+
+/********** get all product controller is here **********/
+const getAllProductSunglassess = async (req, res) => {
+
+
+  try {
+
+
+    // For each product, attach its reviews and reviewer info
+    const product = await Product.find({}).sort({ createdAt: -1 }).lean();
+
+
+
+    const filterSunglassesProduct = product.filter((item) => {
+      return item.frameType === "Prescription Sunglasses" || item.frameType === "Non-Prescription Sunglasses";
+    });
+
+
+
+    // Return response
+    res.status(200).json({
+      success: true,
+      message: "Products fetched successfully!",
+      data: filterSunglassesProduct,
+    });
+
+  } catch (error) {
+    console.error("Error fetching products:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while fetching products.",
+    });
+  }
+
+
+};
+
+
+
+
+
 
 
 
@@ -299,7 +418,6 @@ const deleteProduct = async (req, res) => {
 
 /*********** modules export from here ************/
 export {
-  createProduct, deleteProduct, getAllProduct,
-  getSingleProduct, updateProduct
+  createProduct, deleteProduct, getAllProduct, getAllProductMens, getAllProductSunglassess, getAllProductWomens, getSingleProduct, updateProduct
 };
 
