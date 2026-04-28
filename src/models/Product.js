@@ -124,7 +124,10 @@ const productSchema = new mongoose.Schema(
             trim: true,
         },
 
-
+        isBestSelling: {
+            type: Boolean,
+            default: false,
+        },
 
         status: {
             type: String,

@@ -41,6 +41,45 @@ const getAllProduct = async (req, res) => {
 
 
 
+/********** get all bestselling product controller is here **********/
+const bestsellingproduct = async (req, res) => {
+
+
+  try {
+
+
+    // For each product, attach its reviews and reviewer info
+    const product = await Product.find({}).sort({ createdAt: -1 }).lean();
+
+
+
+    const bestsellingProduct = product.filter((item) => {
+      return item.isBestSelling === true && item.frameType === "Frame";
+    });
+
+
+
+    // Return response
+    res.status(200).json({
+      success: true,
+      message: "Bestselling Products fetched successfully!",
+      data: bestsellingProduct,
+    });
+
+  } catch (error) {
+    console.error("Error fetching products:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while fetching products.",
+    });
+  }
+
+
+};
+
+
+
+
 
 /********** get all product for mens controller is here **********/
 const getAllProductMens = async (req, res) => {
@@ -351,6 +390,66 @@ const updateProduct = async (req, res) => {
 
 
 
+/********** Update  product controller is here **********/
+const bestsellingupdateProduct = async (req, res) => {
+
+
+  try {
+
+    const { id } = req.params;
+
+    // Validate product ID format
+    if (!id || id.length !== 24) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID format.",
+      });
+    }
+
+
+
+    const { isBestSelling } = req.body;
+
+
+
+
+    // Update the product
+    const updatedProduct = await Product.findByIdAndUpdate(id, { isBestSelling: isBestSelling }, {
+      new: true, // return updated document
+      runValidators: true, // enforce schema validation
+    });
+
+
+    //If not found
+    if (!updatedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      });
+    }
+
+
+    //Success response
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully!",
+      data: updatedProduct,
+    });
+
+
+  } catch (err) {
+    console.error("Error updating product:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while updating the product.",
+    });
+  }
+
+
+};
+
+
+
 
 
 
@@ -419,7 +518,5 @@ const deleteProduct = async (req, res) => {
 
 
 /*********** modules export from here ************/
-export {
-  createProduct, deleteProduct, getAllProduct, getAllProductMens, getAllProductSunglassess, getAllProductWomens, getSingleProduct, updateProduct
-};
+export { bestsellingproduct, bestsellingupdateProduct, createProduct, deleteProduct, getAllProduct, getAllProductMens, getAllProductSunglassess, getAllProductWomens, getSingleProduct, updateProduct };
 
